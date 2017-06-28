@@ -9,4 +9,4 @@ for featureType in tree.findall('.//'+ns+'FeatureTypeMapping'):
   name=featureType.attrib['name'].replace(':','.') + '_'
   featureType.find('./'+ns+'FIDMapping').attrib['prefix']=name
 
-tree.write('test.xml')
+tree.write('test.xml', encoding="utf-8")
