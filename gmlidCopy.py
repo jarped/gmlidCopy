@@ -1,12 +1,17 @@
 #!/usr/bin/python
 import sys
-import xml.etree.ElementTree as ET
-tree = ET.parse(sys.argv[1])
+from lxml import etree
 
-ns='{http://www.deegree.org/datasource/feature/sql}'
+ns={'ns0':'http://www.deegree.org/datasource/feature/sql'}
 
-for featureType in tree.findall('.//'+ns+'FeatureTypeMapping'):
-  name=featureType.attrib['name'].replace(':','.') + '_'
-  featureType.find('./'+ns+'FIDMapping').attrib['prefix']=name
+tree = etree.parse(open(sys.argv[1]))
 
-tree.write('test.xml', encoding="utf-8")
+for featureType in tree.xpath('//ns0:FeatureTypeMapping', namespaces=ns):
+  name=featureType.get('name').replace(':','.') + '_'
+  for fidMapping in featureType.xpath('./ns0:FIDMapping', namespaces=ns):
+    prefix=fidMapping.get('prefix')
+    print prefix
+    fidMapping.set('prefix',name)
+  print name
+
+tree.write(sys.stdout, encoding='utf-8', pretty_print=True)
